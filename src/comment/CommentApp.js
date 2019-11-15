@@ -2,9 +2,8 @@
 import React, { Component } from 'react'
 import CommentInput from './CommentInput'
 import CommentList from './CommentList'
-
+import WrapWithLoadData from './wrapWithLoadData'
 class CommentApp extends Component {
-
     constructor () {
         super()
         this.state = {
@@ -13,19 +12,9 @@ class CommentApp extends Component {
     }
 
     UNSAFE_componentWillMount () {
-        this._localComments()
-    }
-
-    _localComments () {
-        let comments = localStorage.getItem('comments')
-        if (comments) {
-            comments = JSON.parse(comments)
-            this.setState({ comments })
-        }
-    }
-
-    _saveComments (comments) {
-        localStorage.setItem('comments', JSON.stringify(comments))
+        this.setState({
+            comments: this.props.data
+        })
     }
 
     handleSubmitComment (comment) {
@@ -37,14 +26,14 @@ class CommentApp extends Component {
         this.setState({
             comments: this.state.comments
         })
-        this._saveComments(this.state.comments)
+        this.props.saveData(this.state.comments)
     }
 
     handleDeleteComment (index) {
         let { comments } = this.state
         comments.splice(index, 1)
         this.setState({ comments })
-        this._saveComments(comments)
+        this.props.saveData(this.state.comments)
     }
 
     render () {
@@ -58,4 +47,5 @@ class CommentApp extends Component {
     }
 }
 
+CommentApp = WrapWithLoadData(CommentApp, 'comments')
 export default CommentApp

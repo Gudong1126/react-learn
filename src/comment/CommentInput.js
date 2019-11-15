@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import WrapWithLoadData from './wrapWithLoadData'
 class CommentInput extends Component {
     constructor () {
         super()
@@ -10,22 +11,13 @@ class CommentInput extends Component {
     }
 
     UNSAFE_componentWillMount () {
-        this._localUsername()
+        this.setState({
+            username: this.props.data
+        })
     }
 
     componentDidMount () {
         this.textarea.focus()
-    }
-
-    _localUsername () {
-        const username = localStorage.getItem('username')
-        if (username) {
-            this.setState({ username })
-        }
-    }
-
-    _saveUsername (username) {
-        localStorage.setItem('username', username)
     }
 
     handleUsernameChange (event) {
@@ -35,7 +27,7 @@ class CommentInput extends Component {
     }
 
     handleUsernameBlur (event) {
-        this._saveUsername(event.target.value)
+        this.props.saveData(event.target.value)
     }
 
     handleContentChange (event) {
@@ -85,4 +77,5 @@ class CommentInput extends Component {
     }
 }
 
+CommentInput = WrapWithLoadData(CommentInput, 'username')
 export default CommentInput
